@@ -1,5 +1,3 @@
-package com.company;
-
 import java.util.ArrayDeque;
 import java.util.Scanner;
 
