@@ -1,3 +1,5 @@
+package com.company;
+
 import java.util.ArrayDeque;
 import java.util.Scanner;
 
@@ -13,16 +15,25 @@ Example inputs:
 000200000
 007040203
 
+090400010
+350000709
+000950000
+800010900
+500609004
+007040001
+000076000
+005000097
+010002030
 
-078000040
-000108006
-000000001
-000000009
-805407000
-000900500
-024005000
-500040680
-006090000
+007519600
+809000705
+005000200
+200030009
+900406003
+500070002
+003000900
+102000306
+004263800
 
  */
 
@@ -35,27 +46,27 @@ public class Main {
         Scanner scan = new Scanner(System.in);
         int[][] startGrid = new int[GRID_SIZE][GRID_SIZE];
         System.out.println("Please input your puzzle. Use zeroes for the empty squares and no spaces between numbers");
-        System.out.printf("Example:%n702050600%n" +
-                "000003000%n" +
-                "100009500%n" +
-                "800000090%n" +
-                "043000750%n" +
-                "090000008%n" +
-                "009700005%n" +
-                "000200000%n" +
-                "007040203%n");
+       System.out.printf("Example:%n702050600%n" +
+               "000003000%n" +
+               "100009500%n" +
+               "800000090%n" +
+               "043000750%n" +
+               "090000008%n" +
+               "009700005%n" +
+               "000200000%n" +
+               "007040203%n");
 
         //read sudoku from console
         for (int rows = 0; rows < GRID_SIZE; rows++) {
             String row = scan.nextLine().trim();
             startGrid[rows] = readStartingInputLine(row);
         }
-
         int[][] solvedGrid = new int[GRID_SIZE][GRID_SIZE];
         makeCopyOfMatrix(solvedGrid, startGrid);
 
         //solution algorithm
         ArrayDeque<Integer> correctNumbersStack = new ArrayDeque<>();
+
         int startCounter = 1;
 
         for (int rowPosition = 0; rowPosition < GRID_SIZE; rowPosition++) {
@@ -63,9 +74,8 @@ public class Main {
 
                 if (startGrid[rowPosition][colPosition] == 0) { //if it is empty in the original sudoku
                     boolean isWorkingSolution = false; //tracks the state of the solved grid
-
                     //start checking row/col/quad
-                    for (int tryNum = startCounter; tryNum <= 9; tryNum++) { //check if each number from 1 to 9 is a fit
+                    for (int tryNum = startCounter; tryNum <= GRID_SIZE; tryNum++) { //check if each number from 1 to 9 is a fit
                         if (checkRow(tryNum, solvedGrid, rowPosition) && checkColumn(tryNum, solvedGrid, colPosition) && checkSquare(tryNum, solvedGrid, rowPosition, colPosition)) {
                             solvedGrid[rowPosition][colPosition] = tryNum;
                             correctNumbersStack.push(tryNum);
@@ -74,9 +84,10 @@ public class Main {
                         }
                     }
 
-                    if (! isWorkingSolution) { //the above check was unsuccessful, go one step back
-                        startCounter = correctNumbersStack.pop() + 1; //for the previous square we checked all digits from 1 to first successful one, now we try the digit after it
+                    if (isWorkingSolution) { //the last number we tried was ok
+                        startCounter = 1; //prepare to iterate from 1 in the next square
 
+                    } else {  // the above check was unsuccessful, go one step back
                         int[] stepBackCoords = stepBack(rowPosition, colPosition, startGrid);
                         rowPosition = stepBackCoords[0];
                         colPosition = stepBackCoords[1];
@@ -88,8 +99,18 @@ public class Main {
                         rowPosition = stepBackCoords[0];
                         colPosition = stepBackCoords[1];
 
-                    } else { //the last number we tried was ok
-                        startCounter = 1; //prepare to iterate from 1 in the next square
+                        //what if correctNumbersStack.pop() = 9 ??? just pop the 9 and step back an extra step
+                        if (correctNumbersStack.peek() == GRID_SIZE) {
+                            solvedGrid[rowPosition][colPosition] = 0;
+                            correctNumbersStack.pop();
+                            startCounter = correctNumbersStack.pop() + 1;
+
+                            stepBackCoords = stepBack(rowPosition, colPosition, startGrid);
+                            rowPosition = stepBackCoords[0];
+                            colPosition = stepBackCoords[1];
+                        } else {
+                            startCounter = correctNumbersStack.pop() + 1; //for the previous square we checked all digits from 1 to first successful one, now we try the digit after it
+                        }
                     }
 
                 }
@@ -152,17 +173,25 @@ public class Main {
         return true;
     }
 
+
     private static int[] stepBack(int rowPosition, int colPosition, int[][] startGrid) {
         int[] coordinates = new int[2];
 
-        do {
-            if (colPosition > 0) {
-                colPosition--;
-            } else {
-                colPosition = 8;
-                rowPosition--; //maybe move up one row
+        if (rowPosition == 0 && colPosition == 0) {
+            rowPosition = 0;
+            colPosition = - 1; //edge case when we are at the beginning of the sudoku
+        } else {
+            do {
+                if (colPosition > 0) {
+                    colPosition--;
+                } else if (rowPosition > 0) {
+                    rowPosition--; //maybe move up one row
+                    colPosition = GRID_SIZE - 1;
+                }
             }
-        } while (startGrid[rowPosition][colPosition]!=0);
+            while (startGrid[rowPosition][colPosition] != 0); //check original problem if value exists on this cell
+
+        }
 
         coordinates[0] = rowPosition;
         coordinates[1] = colPosition;
@@ -178,7 +207,5 @@ public class Main {
             System.out.println();
         }
     }
-    
-    //TODO
-    //checks for valid input
 }
+
