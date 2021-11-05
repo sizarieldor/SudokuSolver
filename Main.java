@@ -138,7 +138,7 @@ public class Main {
     }
 
 
-    private static int[] readStartingInputLine(String input) {    //game reader
+    private static int[] readStartingInputLine(String input) {//game reader
         char[] inputChars = input.toCharArray();
         int[] result = new int[inputChars.length];
         for (int i = 0; i < inputChars.length; i++) {
@@ -147,8 +147,7 @@ public class Main {
         return result;
     }
 
-    //matrix copier
-    private static void makeCopyOfMatrix(int[][] emptyMatrix, int[][] targetMatrix) {
+    private static void makeCopyOfMatrix(int[][] emptyMatrix, int[][] targetMatrix) {//matrix copier
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
                 emptyMatrix[row][col] = targetMatrix[row][col];
@@ -160,7 +159,7 @@ public class Main {
     //-----------------------------------------
     //-----------The three checkers------------
     //-----------------------------------------
-    private static boolean checkRow(int digitToCheck, int[][] currGrid, int currRow) {    //row checker
+    private static boolean checkRow(int digitToCheck, int[][] currGrid, int currRow) {//row checker
         for (int col = 0; col < GRID_SIZE; col++) {
             if (currGrid[currRow][col] == digitToCheck) {
                 return false;
@@ -192,7 +191,7 @@ public class Main {
     }
 
 
-    private static int[] stepBack(int rowPosition, int colPosition, int[][] startGrid) { //BUG if we pass 0,1 and there is originally a # at 0,0
+    private static int[] stepBack(int rowPosition, int colPosition, int[][] startGrid) {
         int[] coordinates = new int[2];
 
         if (rowPosition == 0 && colPosition == 0) { //edge case when we are at the beginning of the sudoku
