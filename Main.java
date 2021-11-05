@@ -13,25 +13,45 @@ Example inputs:
 000200000
 007040203
 
-090400010
-350000709
-000950000
-800010900
-500609004
-007040001
-000076000
-005000097
-010002030
+078000040
+000108006
+000000001
+000000009
+805407000
+000900500
+024005000
+500040680
+006090000
 
-007519600
-809000705
-005000200
-200030009
-900406003
-500070002
-003000900
-102000306
-004263800
+100900700
+007050061
+000000002
+040002070
+000184000
+080600020
+300000000
+890030400
+005008007
+
+000008500
+001000000
+473600000
+600200004
+000007030
+000095060
+000000006
+107080000
+008704000
+
+080010047
+001500000
+000000002
+060000500
+000040200
+700900064
+070050081
+000000600
+900003000
 
  */
 
@@ -44,15 +64,15 @@ public class Main {
         Scanner scan = new Scanner(System.in);
         int[][] startGrid = new int[GRID_SIZE][GRID_SIZE];
         System.out.println("Please input your puzzle. Use zeroes for the empty squares and no spaces between numbers");
-       System.out.printf("Example:%n702050600%n" +
-               "000003000%n" +
-               "100009500%n" +
-               "800000090%n" +
-               "043000750%n" +
-               "090000008%n" +
-               "009700005%n" +
-               "000200000%n" +
-               "007040203%n");
+//        System.out.printf("Example:%n702050600%n" +
+//                "000003000%n" +
+//                "100009500%n" +
+//                "800000090%n" +
+//                "043000750%n" +
+//                "090000008%n" +
+//                "009700005%n" +
+//                "000200000%n" +
+//                "007040203%n");
 
         //read sudoku from console
         for (int rows = 0; rows < GRID_SIZE; rows++) {
@@ -172,22 +192,26 @@ public class Main {
     }
 
 
-    private static int[] stepBack(int rowPosition, int colPosition, int[][] startGrid) {
+    private static int[] stepBack(int rowPosition, int colPosition, int[][] startGrid) { //BUG if we pass 0,1 and there is originally a # at 0,0
         int[] coordinates = new int[2];
 
-        if (rowPosition == 0 && colPosition == 0) {
+        if (rowPosition == 0 && colPosition == 0) { //edge case when we are at the beginning of the sudoku
             rowPosition = 0;
-            colPosition = - 1; //edge case when we are at the beginning of the sudoku
+            colPosition = - 1;
         } else {
             do {
                 if (colPosition > 0) {
                     colPosition--;
                 } else if (rowPosition > 0) {
-                    rowPosition--; //maybe move up one row
+                    rowPosition--; //possibly move up one row
                     colPosition = GRID_SIZE - 1;
                 }
+
+                if(startGrid[0][0]!=0 && rowPosition==0 && colPosition == 0){ //for the edge case where we pass 0,1 and there exists a number at 0,0 on the original grid
+                    break;
+                }
             }
-            while (startGrid[rowPosition][colPosition] != 0); //check original problem if value exists on this cell
+            while (startGrid[rowPosition][colPosition] != 0); //check original grid if value exists on this cell
 
         }
 
@@ -205,5 +229,8 @@ public class Main {
             System.out.println();
         }
     }
+
+    //TODO
+    //checks for valid input; input format
 }
 
